@@ -42,6 +42,18 @@
             overflow: hidden;
             position: relative;
         }
+        
+        .book-wrapper {
+            width: 90vw;        /* responsive width */
+            max-width: 1300px;  /* limit maximum width */
+            aspect-ratio: 16 / 6; /* maintain 16:9 ratio */
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; /* relative for 3D children */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         body::before {
             content: '';
@@ -64,15 +76,17 @@
         .book-scene {
             perspective: 2500px;
             perspective-origin: 50% 50%;
+            width: 100%;
+            height: 100%;
         }
 
-        .book-wrapper {
+        /* .book-wrapper {
             position: relative;
             width: 1000px;
             height: 700px;
             transform-style: preserve-3d;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        } */
 
         .book {
             position: relative;
@@ -781,11 +795,11 @@
 
         /* Responsive Design */
         @media (max-width: 1100px) {
-            .book-wrapper {
+            /* .book-wrapper {
                 width: 90vw;
                 max-width: 900px;
                 height: 600px;
-            }
+            } */
 
             h1 {
                 font-size: 40px;
@@ -797,10 +811,10 @@
         }
 
         @media (max-width: 768px) {
-            .book-wrapper {
+            /* .book-wrapper {
                 height: 80vh;
                 max-height: 700px;
-            }
+            } */
 
             .page-content {
                 padding: 40px 30px;
