@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Portfolio</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0F172A;
+            --secondary: #000;
+            --accent: #130080;
+            --accent-hover: #000;
+            --text-primary: #0F172A;
+            --text-secondary: #64748B;
+            --bg-gradient: linear-gradient(135deg, #000e5e 0%, #000 100%);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #000 0%, #000 50%, #000 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(6, 5, 78, 0.3), transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 4, 61, 0.3), transparent 50%);
+            pointer-events: none;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .book-scene {
+            perspective: 2500px;
+            perspective-origin: 50% 50%;
+        }
+
+        .book-wrapper {
+            position: relative;
+            width: 1000px;
+            height: 700px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .book {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg) rotateX(0deg);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .book:hover {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+        }
+
+        /* Book Cover/Base */
+        .book-cover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 1px rgba(255,255,255,0.1);
+            transform: translateZ(-30px);
+        }
+
+        /* Book Pages Stack Effect */
+        .book-pages-stack {
+            position: absolute;
+            right: -3px;
+            top: 4px;
+            bottom: 4px;
+            width: 30px;
+            background: linear-gradient(to right, #f8fafc, #e2e8f0, #f8fafc);
+            border-radius: 0 4px 4px 0;
+            transform: translateZ(-29px);
+            box-shadow: 
+                inset -2px 0 4px rgba(0,0,0,0.1),
+                2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .book-pages-stack::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 4px,
+                rgba(0,0,0,0.02) 4px,
+                rgba(0,0,0,0.02) 5px
+            );
+        }
+
+        /* Fake Paper Layers - Left Side */
+        .fake-pages-left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            transform-style: preserve-3d;
+            pointer-events: none;
+        }
+
+        .fake-page-left {
+            position: absolute;
+            left: 0;
+            top: 0px;
+            bottom: 0px;
+            width: calc(100% - 15px);
+            background: #fefefe;
+            /* border-radius: 10px 0 0 10px; */
+            box-shadow: 
+                -2px 0 8px rgba(0,0,0,0.1),
+                inset 3px 0 8px rgba(0,0,0,0.03);
+        }
+        .fake-page-left-last {
+            position: absolute;
+            left: 0;
+            top: 0px;
+            bottom: 0px;
+            width: calc(100% - 15px);
+            background: #0a009b;
+            border-radius: 10px 0 0 10px;
+            box-shadow: 
+                -2px 0 8px rgba(0,0,0,0.1),
+                inset 3px 0 8px rgba(0,0,0,0.03);
+        }
+        
+
+        .fake-page-left-1 {
+            transform: translateZ(-5px) translateX(-3px);
+            opacity: 0.95;
+        }
+
+        .fake-page-left-2 {
+            transform: translateZ(-10px) translateX(-6px);
+            opacity: 0.9;
+        }
+
+        .fake-page-left-3 {
+            transform: translateZ(-15px) translateX(-9px);
+            opacity: 0.85;
+        }
+
+        .fake-page-left-4 {
+            transform: translateZ(-20px) translateX(-12px);
+            opacity: 0.8;
+        }
+
+        .fake-page-left-5 {
+            transform: translateZ(-25px) translateX(-15px);
+            opacity: 0.75;
+        }
+        .fake-page-left-6 {
+            transform: translateZ(-30px) translateX(-18px);
+            opacity: 0.7;
+        }
+        .fake-page-left-7 {
+            transform: translateZ(-35px) translateX(-21px);
+            opacity: 0.65;
+        }
+        .fake-page-left-8 {
+            transform: translateZ(-40px) translateX(-24px);
+            opacity: 0.6;
+        }
+        .fake-page-left-9 {
+            transform: translateZ(-45px) translateX(-27px);
+            opacity: 0.55;
+        }
+        .fake-page-left-10 {
+            transform: translateZ(-50px) translateX(-30px);
+            opacity: 0.5;
+        }
+
+        /* Fake Paper Layers - Right Side */
+        .fake-pages-right {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            transform-style: preserve-3d;
+            pointer-events: none;
+        }
+
+        .fake-page-right {
+            position: absolute;
+            right: 0;
+            top: 0px;
+            bottom: 0px;
+            width: calc(100% - 15px);
+            background: #fefefe;
+            /* border-radius: 0 10px 10px 0; */
+            box-shadow: 
+                2px 0 8px rgba(0,0,0,0.1),
+                inset -3px 0 8px rgba(0,0,0,0.03);
+        }
+        .fake-page-right-last {
+            position: absolute;
+            right: 0;
+            top: 0px;
+            bottom: 0px;
+            width: calc(100% - 15px);
+            background: #0a009b;
+            border-radius: 0 10px 10px 0;
+            box-shadow: 
+                2px 0 8px rgba(0,0,0,0.1),
+                inset -3px 0 8px rgba(0,0,0,0.03);
+        }
+
+        .fake-page-right-1 {
+            transform: translateZ(-5px) translateX(3px);
+            opacity: 0.95;
+        }
+
+        .fake-page-right-2 {
+            transform: translateZ(-10px) translateX(6px);
+            opacity: 0.9;
+        }
+
+        .fake-page-right-3 {
+            transform: translateZ(-15px) translateX(9px);
+            opacity: 0.85;
+        }
+
+        .fake-page-right-4 {
+            transform: translateZ(-20px) translateX(12px);
+            opacity: 0.8;
+        }
+
+        .fake-page-right-5 {
+            transform: translateZ(-25px) translateX(15px);
+            opacity: 0.75;
+        }
+        .fake-page-right-6 {
+            transform: translateZ(-30px) translateX(18px);
+            opacity: 0.7;
+        }
+        .fake-page-right-7 {
+            transform: translateZ(-35px) translateX(21px);
+            opacity: 0.65;
+        }
+        .fake-page-right-8 {
+            transform: translateZ(-40px) translateX(24px);
+            opacity: 0.6;
+        }
+        .fake-page-right-9 {
+            transform: translateZ(-45px) translateX(27px);
+            opacity: 0.55;
+        }
+        .fake-page-right-10 {
+            transform: translateZ(-50px) translateX(30px);
+            opacity: 0.5;
+        }
+
+        /* Page Container */
+        .pages-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        /* Individual Page */
+        .page {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background: #ffffff;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        .page-left {
+            left: 0;
+            transform-origin: right center;
+            box-shadow: 
+                -5px 0 15px rgba(0,0,0,0.1),
+                inset 3px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .page-right {
+            right: 0;
+            transform-origin: left center;
+            box-shadow: 
+                5px 0 15px rgba(0,0,0,0.1),
+                inset -3px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .page-turning-left {
+            animation: pageTurnLeft 1s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+        }
+
+        .page-turning-right {
+            animation: pageTurnRight 1s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+        }
+
+        @keyframes pageTurnLeft {
+            0% { 
+                transform: rotateY(0deg);
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            }
+            50% {
+                box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+            }
+            100% { 
+                transform: rotateY(-180deg);
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            }
+        }
+
+        @keyframes pageTurnRight {
+            0% { 
+                transform: rotateY(0deg);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            }
+            50% {
+                box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+            }
+            100% { 
+                transform: rotateY(180deg);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            }
+        }
+
+        /* Page Content */
+        .page-content {
+            padding: 60px 50px;
+            height: 100%;
+            /* overflow-y: auto; */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .page-content::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .page-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .page-content::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 32px 0 16px;
+            letter-spacing: -0.01em;
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+            letter-spacing: -0.01em;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        /* Cover Page */
+        .cover-page {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1), transparent 60%),
+                radial-gradient(circle at 70% 60%, rgba(255,255,255,0.08), transparent 60%);
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-page h1 {
+            color: #ffffff;
+            font-size: 64px;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+
+        .cover-page .subtitle {
+            font-size: 24px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+            margin-bottom: 16px;
+            letter-spacing: 0.02em;
+        }
+
+        .cover-page .tagline {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 400;
+            max-width: 400px;
+        }
+
+        /* Skill Tags */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        /* Project Cards */
+        .project-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 28px;
+            margin: 16px 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent), #8b5cf6);
+            transform: scaleY(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: bottom;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
+            border-color: var(--accent);
+        }
+
+        .project-card:hover::before {
+            transform: scaleY(1);
+            transform-origin: top;
+        }
+
+        .project-card h3 {
+            margin-top: 0;
+            color: var(--text-primary);
+            font-size: 22px;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .tech-badge {
+            background: #eff6ff;
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid #dbeafe;
+        }
+
+        /* Contact Section */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin: 12px 0;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .contact-item:hover {
+            background: #ffffff;
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .contact-value {
+            font-size: 15px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            /* background: rgba(255, 255, 255, 0.95); */
+            padding: 12px 20px;
+            /* border-radius: 24px; */
+            /* box-shadow: 
+                0 10px 40px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(255,255,255,0.5); */
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            /* background: linear-gradient(135deg, var(--accent), #000149); */
+            background: #000;
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); */
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        /* Create white underline directly under text */
+        .nav-button span {
+        position: relative;
+        display: inline-block;
+        }
+
+        .nav-button span::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px; /* distance below text */
+        width: 100%;
+        height: 2px;
+        background-color: white;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.3s ease;
+        }
+
+        /* Hover effect — line appears */
+        .nav-button:hover span::after {
+        transform: scaleX(1);
+        }
+
+        /* Optional subtle lift */
+        .nav-button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 4, 255, 0.4);
+        }
+
+        .nav-button:active:not(:disabled) {
+        transform: translateY(0);
+        }
+        .nav-button:hover:not(:disabled)::before {
+            left: 100%;
+        } */
+
+        /* .nav-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 4, 255, 0.4);
+            background: linear-gradient(135deg, var(--accent-hover), #5558e3);
+        } */
+
+        /* .nav-button:active:not(:disabled) {
+            transform: translateY(0);
+        } */
+
+        .nav-button:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .nav-arrow {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-button:hover:not(:disabled) .nav-arrow.left {
+            transform: translateX(-4px);
+        }
+
+        .nav-button:hover:not(:disabled) .nav-arrow.right {
+            transform: translateX(4px);
+        }
+
+        .page-indicator {
+            display: flex;
+            gap: 8px;
+            padding: 0 12px;
+        }
+
+        .page-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .page-dot.active {
+            background: var(--accent);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .page-dot:hover:not(.active) {
+            background: #94a3b8;
+            transform: scale(1.2);
+        }
+
+        /* Page Number */
+        .page-number {
+            position: absolute;
+            bottom: 30px;
+            font-size: 14px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .page-left .page-number {
+            left: 50px;
+        }
+
+        .page-right .page-number {
+            right: 50px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .book-wrapper {
+                width: 90vw;
+                max-width: 900px;
+                height: 600px;
+            }
+
+            h1 {
+                font-size: 40px;
+            }
+
+            .cover-page h1 {
+                font-size: 52px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .book-wrapper {
+                height: 80vh;
+                max-height: 700px;
+            }
+
+            .page-content {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .cover-page h1 {
+                font-size: 40px;
+            }
+
+            .cover-page .subtitle {
+                font-size: 20px;
+            }
+
+            .navigation {
+                bottom: 20px;
+                padding: 8px 12px;
+            }
+
+            .nav-button {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Portfolio Data - Customize with your content
+        const portfolioPages = [
+            {
+                type: 'cover',
+                title: 'Your Name',
+                subtitle: 'Full Stack Developer & UI/UX Designer',
+                tagline: 'Creating exceptional digital experiences through code and design'
+            },
+            {
+                type: 'content',
+                title: 'About Me',
+                content: `
+                    <p>Hello! I'm a passionate full-stack developer with a keen eye for design and user experience. With over 5 years of experience in building web applications, I specialize in creating solutions that are not only functional but also beautiful and intuitive.</p>
+                    
+                    <p>My journey in tech began with a curiosity about how things work on the web. That curiosity evolved into a career where I get to combine creativity with technical expertise to solve real-world problems.</p>
+                    
+                    <h3>What I Do Best</h3>
+                    <p>I excel at bridging the gap between design and development, ensuring that every project I work on delivers an exceptional user experience while maintaining clean, maintainable code. I believe in continuous learning and staying updated with the latest technologies and best practices.</p>
+                    
+                    <h3>My Approach</h3>
+                    <p>I approach every project with a user-first mindset, focusing on understanding the problem before jumping into solutions. Collaboration, clear communication, and attention to detail are the cornerstones of my work philosophy.</p>
+                `
+            },
+            {
+                type: 'content',
+                title: 'Technical Skills',
+                content: `
+                    <h3>Frontend Development</h3>
+                    <div class="skills-grid">
+                        <div class="skill-tag">React.js</div>
+                        <div class="skill-tag">Next.js</div>
+                        <div class="skill-tag">TypeScript</div>
+                        <div class="skill-tag">JavaScript</div>
+                        <div class="skill-tag">HTML5</div>
+                        <div class="skill-tag">CSS3</div>
+                        <div class="skill-tag">Tailwind CSS</div>
+                        <div class="skill-tag">Vue.js</div>
+                    </div>
+                    
+                    <h3>Backend Development</h3>
+                    <div class="skills-grid">
+                        <div class="skill-tag">Node.js</div>
+                        <div class="skill-tag">Python</div>
+                        <div class="skill-tag">FastAPI</div>
+                        <div class="skill-tag">Express.js</div>
+                        <div class="skill-tag">PostgreSQL</div>
+                        <div class="skill-tag">MongoDB</div>
+                        <div class="skill-tag">Redis</div>
+                        <div class="skill-tag">GraphQL</div>
+                    </div>
+                    
+                    <h3>Tools & DevOps</h3>
+                    <div class="skills-grid">
+                        <div class="skill-tag">Git</div>
+                        <div class="skill-tag">Docker</div>
+                        <div class="skill-tag">AWS</div>
+                        <div class="skill-tag">CI/CD</div>
+                        <div class="skill-tag">Figma</div>
+                        <div class="skill-tag">Webpack</div>
+                        <div class="skill-tag">Jest</div>
+                        <div class="skill-tag">Agile</div>
+                    </div>
+                `
+            },
+            {
+                type: 'content',
+                title: 'Featured Projects',
+                content: `
+                    <div class="project-card fade-in">
+                        <h3>Enterprise SaaS Platform</h3>
+                        <p>Led the development of a comprehensive B2B SaaS platform serving 50,000+ users. Implemented real-time collaboration features, advanced analytics dashboard, and seamless integrations with popular business tools.</p>
+                        <p style="color: var(--text-secondary); font-size: 15px; margin-top: 12px;"><strong>Impact:</strong> 40% increase in user productivity, 99.9% uptime</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">Node.js</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                            <span class="tech-badge">AWS</span>
+                            <span class="tech-badge">WebSocket</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card fade-in">
+                        <h3>AI-Powered Analytics Dashboard</h3>
+                        <p>Built an intelligent analytics platform that processes millions of data points in real-time, featuring predictive analytics, custom reporting, and automated insights generation.</p>
+                        <p style="color: var(--text-secondary); font-size: 15px; margin-top: 12px;"><strong>Impact:</strong> Reduced decision-making time by 60%</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Next.js</span>
+                            <span class="tech-badge">Python</span>
+                            <span class="tech-badge">TensorFlow</span>
+                            <span class="tech-badge">D3.js</span>
+                            <span class="tech-badge">Redis</span>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                type: 'content',
+                title: 'More Projects',
+                content: `
+                    <div class="project-card fade-in">
+                        <h3>E-Commerce Mobile App</h3>
+                        <p>Designed and developed a cross-platform mobile application with seamless checkout experience, personalized recommendations, and offline support. Achieved 4.8-star rating on app stores.</p>
+                        <p style="color: var(--text-secondary); font-size: 15px; margin-top: 12px;"><strong>Impact:</strong> 2M+ downloads, 35% increase in mobile sales</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">React Native</span>
+                            <span class="tech-badge">TypeScript</span>
+                            <span class="tech-badge">Firebase</span>
+                            <span class="tech-badge">Stripe</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card fade-in">
+                        <h3>Real-Time Collaboration Tool</h3>
+                        <p>Created a sophisticated collaboration platform with live editing, video conferencing, and project management features. Designed to scale for teams of all sizes.</p>
+                        <p style="color: var(--text-secondary); font-size: 15px; margin-top: 12px;"><strong>Impact:</strong> Used by 500+ companies worldwide</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Vue.js</span>
+                            <span class="tech-badge">WebRTC</span>
+                            <span class="tech-badge">Socket.io</span>
+                            <span class="tech-badge">MongoDB</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card fade-in">
+                        <h3>Design System Library</h3>
+                        <p>Built a comprehensive design system and component library used across multiple products. Includes 100+ components, extensive documentation, and automated testing.</p>
+                        <p style="color: var(--text-secondary); font-size: 15px; margin-top: 12px;"><strong>Impact:</strong> 70% faster development time</p>
+                        <div class="project-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">Storybook</span>
+                            <span class="tech-badge">TypeScript</span>
+                            <span class="tech-badge">CSS-in-JS</span>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                type: 'content',
+                title: 'Get In Touch',
+                content: `
+                    <p style="font-size: 18px; color: var(--text-primary); margin-bottom: 32px;">I'm always excited to connect with fellow developers, potential clients, or anyone interested in collaborating on innovative projects. Let's create something amazing together!</p>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">your.email@example.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">💼</div>
+                        <div class="contact-info">
+                            <div class="contact-label">LinkedIn</div>
+                            <div class="contact-value">linkedin.com/in/yourprofile</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">🐙</div>
+                        <div class="contact-info">
+                            <div class="contact-label">GitHub</div>
+                            <div class="contact-value">github.com/yourusername</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">🌐</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Website</div>
+                            <div class="contact-value">www.yourwebsite.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">🐦</div>
+                        <div class="contact-info">
+                            <div class="contact-label">Twitter</div>
+                            <div class="contact-value">@yourhandle</div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 40px;">Open to Opportunities</h3>
+                    <p>Currently available for freelance projects and full-time opportunities. Whether you need a complete application built from scratch or want to enhance an existing product, I'd love to hear about your project.</p>
+                `
+            }
+        ];
+
+        function PortfolioBook() {
+            const [currentPage, setCurrentPage] = useState(0);
+            const [isFlipping, setIsFlipping] = useState(false);
+            const [direction, setDirection] = useState('');
+
+            const nextPage = () => {
+                if (currentPage < portfolioPages.length - 1 && !isFlipping) {
+                    setIsFlipping(true);
+                    setDirection('next');
+                    setTimeout(() => {
+                        setCurrentPage(currentPage + 1);
+                        setIsFlipping(false);
+                    }, 500);
+                }
+            };
+
+            const prevPage = () => {
+                if (currentPage > 0 && !isFlipping) {
+                    setIsFlipping(true);
+                    setDirection('prev');
+                    setTimeout(() => {
+                        setCurrentPage(currentPage - 1);
+                        setIsFlipping(false);
+                    }, 500);
+                }
+            };
+
+            const goToPage = (index) => {
+                if (index !== currentPage && !isFlipping) {
+                    setIsFlipping(true);
+                    setDirection(index > currentPage ? 'next' : 'prev');
+                    setTimeout(() => {
+                        setCurrentPage(index);
+                        setIsFlipping(false);
+                    }, 500);
+                }
+            };
+
+            const renderPage = (pageData, side) => {
+                if (pageData.type === 'cover') {
+                    return (
+                        <div className="cover-page">
+                            <div className="cover-content">
+                                <h1>{pageData.title}</h1>
+                                <div className="subtitle">{pageData.subtitle}</div>
+                                <p className="tagline">{pageData.tagline}</p>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <>
+                        <div className="page-content">
+                            <h1>{pageData.title}</h1>
+                            <div dangerouslySetInnerHTML={{ __html: pageData.content }} />
+                        </div>
+                        {currentPage > 0 && (
+                            <div className="page-number">
+                                {currentPage + (side === 'right' ? 1 : 0)}
+                            </div>
+                        )}
+                    </>
+                );
+            };
+
+            const leftPageData = currentPage > 0 ? portfolioPages[currentPage - 1] : null;
+            const rightPageData = portfolioPages[currentPage];
+
+            return (
+                <div className="app-container">
+                    <div className="book-scene">
+                        <div className="book-wrapper">
+                            <div className="book">
+                                <div className="book-cover"></div>
+                                <div className="book-pages-stack"></div>
+                                
+                                {/* Fake paper layers for depth */}
+                                <div className="fake-pages-left">
+                                    <div className="fake-page-left fake-page-left-1"></div>
+                                    <div className="fake-page-left fake-page-left-2"></div>
+                                    <div className="fake-page-left fake-page-left-3"></div>
+                                    <div className="fake-page-left fake-page-left-4"></div>
+                                    <div className="fake-page-left fake-page-left-5"></div>
+                                    <div className="fake-page-left fake-page-left-6"></div>
+                                    <div className="fake-page-left fake-page-left-7"></div>
+                                    <div className="fake-page-left fake-page-left-8"></div>
+                                    <div className="fake-page-left fake-page-left-9"></div>
+                                    <div className="fake-page-left-last fake-page-left-10"></div>
+                                </div>
+                                
+                                <div className="fake-pages-right">
+                                    <div className="fake-page-right fake-page-right-1"></div>
+                                    <div className="fake-page-right fake-page-right-2"></div>
+                                    <div className="fake-page-right fake-page-right-3"></div>
+                                    <div className="fake-page-right fake-page-right-4"></div>
+                                    <div className="fake-page-right fake-page-right-5"></div>
+                                    <div className="fake-page-right fake-page-right-6"></div>
+                                    <div className="fake-page-right fake-page-right-7"></div>
+                                    <div className="fake-page-right fake-page-right-8"></div>
+                                    <div className="fake-page-right fake-page-right-9"></div>
+                                    <div className="fake-page-right-last fake-page-right-10"></div>
+                                </div>
+                                
+                                <div className="pages-container">
+                                    <div className={`page page-left ${isFlipping && direction === 'prev' ? 'page-turning-left' : ''}`}>
+                                        {leftPageData && renderPage(leftPageData, 'left')}
+                                    </div>
+                                    
+                                    <div className={`page page-right ${isFlipping && direction === 'next' ? 'page-turning-right' : ''}`}>
+                                        {rightPageData && renderPage(rightPageData, 'right')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav className="navigation">
+                        <button 
+                            className="nav-button" 
+                            onClick={prevPage} 
+                            disabled={currentPage === 0 || isFlipping}
+                        >
+                            
+                            <span>Previous</span>
+                        </button>
+                        
+                        <div className="page-indicator">
+                            {portfolioPages.map((_, index) => (
+                                <div 
+                                    key={index}
+                                    className={`page-dot ${index === currentPage ? 'active' : ''}`}
+                                    onClick={() => goToPage(index)}
+                                />
+                            ))}
+                        </div>
+                        
+                        <button 
+                            className="nav-button" 
+                            onClick={nextPage} 
+                            disabled={currentPage === portfolioPages.length - 1 || isFlipping}
+                        >
+                            <span>Next</span>
+                            
+                        </button>
+                    </nav>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<PortfolioBook />, document.getElementById('root'));
+    </script>
+</body>
+</html>
